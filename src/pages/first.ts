@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import gsap from "gsap";
+import { OrbitControls } from "three/examples/jsm/Addons.js";
 
 export function run() {
   const scene = new THREE.Scene();
@@ -25,6 +26,8 @@ export function run() {
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setSize(window.innerWidth, window.innerHeight);
 
+  new OrbitControls(camera, renderer.domElement);
+
   let timeout: number;
   function handleResize() {
     if (timeout) {
@@ -37,21 +40,13 @@ export function run() {
     }, 200);
   }
 
-  gsap
-    .timeline({ repeat: Infinity })
-    .add(gsap.to(mesh.position, { x: 2, y: 2, duration: 2 }))
-    .add(gsap.to(mesh.position, { x: -2, y: 2, duration: 2 }))
-    .add(gsap.to(mesh.position, { x: -2, y: -2, duration: 2 }))
-    .add(gsap.to(mesh.position, { x: 2, y: -2, duration: 2 }))
-    .add(gsap.to(mesh.position, { x: 0, y: 0, duration: 2 }));
+  window.addEventListener("resize", handleResize);
 
   function animate() {
     renderer.render(scene, camera);
 
     requestAnimationFrame(animate);
   }
-
-  window.addEventListener("resize", handleResize);
 
   animate();
 }
