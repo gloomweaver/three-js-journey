@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import gsap from "gsap";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { OrbitControls, TransformControls } from "three/examples/jsm/Addons.js";
 
 export function run() {
   const scene = new THREE.Scene();
@@ -26,7 +26,8 @@ export function run() {
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  new OrbitControls(camera, renderer.domElement);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
 
   let timeout: number;
   function handleResize() {
@@ -43,6 +44,8 @@ export function run() {
   window.addEventListener("resize", handleResize);
 
   function animate() {
+    controls.update();
+
     renderer.render(scene, camera);
 
     requestAnimationFrame(animate);
