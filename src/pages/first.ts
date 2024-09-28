@@ -38,19 +38,12 @@ export function run() {
   }
 
   gsap
-    .to(mesh.position, { x: 2, y: 2, duration: 2 })
-    .then(() => {
-      return gsap.to(mesh.position, { x: -2, y: 2, duration: 2 });
-    })
-    .then(() => {
-      return gsap.to(mesh.position, { x: -2, y: -2, duration: 2 });
-    })
-    .then(() => {
-      return gsap.to(mesh.position, { x: 2, y: -2, duration: 2 });
-    })
-    .then(() => {
-      return gsap.to(mesh.position, { x: 0, y: 0, duration: 2 });
-    });
+    .timeline({ repeat: Infinity })
+    .add(gsap.to(mesh.position, { x: 2, y: 2, duration: 2 }))
+    .add(gsap.to(mesh.position, { x: -2, y: 2, duration: 2 }))
+    .add(gsap.to(mesh.position, { x: -2, y: -2, duration: 2 }))
+    .add(gsap.to(mesh.position, { x: 2, y: -2, duration: 2 }))
+    .add(gsap.to(mesh.position, { x: 0, y: 0, duration: 2 }));
 
   function animate() {
     renderer.render(scene, camera);
