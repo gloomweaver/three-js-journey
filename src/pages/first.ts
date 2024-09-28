@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import gsap from "gsap";
 
 export function run() {
   const scene = new THREE.Scene();
@@ -24,14 +25,40 @@ export function run() {
   const renderer = new THREE.WebGLRenderer({ canvas });
   renderer.setSize(window.innerWidth, window.innerHeight);
 
-  function animate() {
-    mesh.rotation.x += 0.01;
-    mesh.rotation.y += 0.01;
+  let timeout: number;
+  function handleResize() {
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+    }, 200);
+  }
 
+  gsap
+    .to(mesh.position, { x: 2, y: 2, duration: 2 })
+    .then(() => {
+      return gsap.to(mesh.position, { x: -2, y: 2, duration: 2 });
+    })
+    .then(() => {
+      return gsap.to(mesh.position, { x: -2, y: -2, duration: 2 });
+    })
+    .then(() => {
+      return gsap.to(mesh.position, { x: 2, y: -2, duration: 2 });
+    })
+    .then(() => {
+      return gsap.to(mesh.position, { x: 0, y: 0, duration: 2 });
+    });
+
+  function animate() {
     renderer.render(scene, camera);
 
     requestAnimationFrame(animate);
   }
+
+  window.addEventListener("resize", handleResize);
 
   animate();
 }
