@@ -26,7 +26,7 @@ export function run() {
   const normalMapTexture = textureLoader.load(normalImg.src);
 
   const rgbeLoader = new RGBELoader(manager);
-  rgbeLoader.load("./environmentMap/2k.hdr", (environmentMap) => {
+  rgbeLoader.load("/environmentMap/2k.hdr", (environmentMap) => {
     environmentMap.mapping = THREE.EquirectangularReflectionMapping;
     scene.background = environmentMap;
     scene.environment = environmentMap;
