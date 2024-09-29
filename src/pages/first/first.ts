@@ -1,7 +1,8 @@
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/Addons.js";
+import { OrbitControls, RGBELoader } from "three/examples/jsm/Addons.js";
 
-import doorColorJPG from "../textures/door/color.jpg";
+import doorColorImg from "./textures/door/color.jpg";
+import matcapImg from "./textures/matcaps/5.png";
 
 export function run() {
   const scene = new THREE.Scene();
@@ -10,16 +11,31 @@ export function run() {
     throw new Error("Canvas not found");
   }
 
+  // LOAD ASSETS
   const manager = new THREE.LoadingManager();
   const textureLoader = new THREE.TextureLoader(manager);
-  const textureDoorColor = textureLoader.load(doorColorJPG.src);
+  const textureDoorColor = textureLoader.load(doorColorImg.src);
+  const matcap = textureLoader.load(matcapImg.src);
+  const rgbeLoader = new RGBELoader(manager);
+  rgbeLoader.load("./environmentMap/2k.hdr", (environmentMap) => {
+    environmentMap.mapping = THREE.EquirectangularReflectionMapping;
+    scene.background = environmentMap;
+    scene.environment = environmentMap;
+  });
 
   textureDoorColor.colorSpace = THREE.SRGBColorSpace;
 
-  const material = new THREE.MeshBasicMaterial({ map: textureDoorColor });
+  // MATERIALS
+  const material = new THREE.MeshStandardMaterial({
+    // map: textureDoorColor,
+    roughness: 0,
+    metalness: 1,
+    side: THREE.DoubleSide,
+  });
 
+  // MESHES
   const torus = new THREE.Mesh(
-    new THREE.TorusGeometry(0.5, 0.4, 16, 100),
+    new THREE.TorusGeometry(0.5, 0.2, 16, 100),
     material
   );
   torus.position.x = -2;
@@ -31,6 +47,7 @@ export function run() {
   const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
   scene.add(torus, sphere, plane);
 
+  // CAMERA
   const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -46,6 +63,7 @@ export function run() {
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
 
+  // HANDLERS
   let timeout: number;
   function handleResize() {
     if (timeout) {
@@ -60,6 +78,7 @@ export function run() {
 
   window.addEventListener("resize", handleResize);
 
+  // GAME LOOP
   const clock = new THREE.Clock();
   function animate() {
     controls.update();
