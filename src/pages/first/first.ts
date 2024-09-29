@@ -2,7 +2,11 @@ import * as THREE from "three";
 import { OrbitControls, RGBELoader } from "three/examples/jsm/Addons.js";
 
 import doorColorImg from "./textures/door/color.jpg";
-import matcapImg from "./textures/matcaps/5.png";
+import doorAoImg from "./textures/door/ambientOcclusion.jpg";
+import doorHeightImg from "./textures/door/height.jpg";
+import metalnessImg from "./textures/door/metalness.jpg";
+import roughnessImg from "./textures/door/roughness.jpg";
+import normalImg from "./textures/door/normal.jpg";
 
 export function run() {
   const scene = new THREE.Scene();
@@ -15,7 +19,12 @@ export function run() {
   const manager = new THREE.LoadingManager();
   const textureLoader = new THREE.TextureLoader(manager);
   const textureDoorColor = textureLoader.load(doorColorImg.src);
-  const matcap = textureLoader.load(matcapImg.src);
+  const ambientOcclusionDoorTexture = textureLoader.load(doorAoImg.src);
+  const heightDoorTexture = textureLoader.load(doorHeightImg.src);
+  const metalnessMapTexture = textureLoader.load(metalnessImg.src);
+  const roughnessMapTexture = textureLoader.load(roughnessImg.src);
+  const normalMapTexture = textureLoader.load(normalImg.src);
+
   const rgbeLoader = new RGBELoader(manager);
   rgbeLoader.load("./environmentMap/2k.hdr", (environmentMap) => {
     environmentMap.mapping = THREE.EquirectangularReflectionMapping;
@@ -28,14 +37,22 @@ export function run() {
   // MATERIALS
   const material = new THREE.MeshStandardMaterial({
     // map: textureDoorColor,
-    roughness: 0,
+    metalnessMap: metalnessMapTexture,
+    roughnessMap: roughnessMapTexture,
+    map: textureDoorColor,
     metalness: 1,
+    roughness: 1,
+    aoMap: ambientOcclusionDoorTexture,
+    displacementMap: heightDoorTexture,
+    displacementScale: 0.1,
+    normalMap: normalMapTexture,
+    normalScale: new THREE.Vector2(5, 5),
     side: THREE.DoubleSide,
   });
 
   // MESHES
   const torus = new THREE.Mesh(
-    new THREE.TorusGeometry(0.5, 0.2, 16, 100),
+    new THREE.TorusGeometry(0.5, 0.2, 64, 64),
     material
   );
   torus.position.x = -2;
@@ -44,7 +61,10 @@ export function run() {
     material
   );
   sphere.position.x = 2;
-  const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
+  const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(1, 1, 100, 100),
+    material
+  );
   scene.add(torus, sphere, plane);
 
   // CAMERA
@@ -77,6 +97,16 @@ export function run() {
   }
 
   window.addEventListener("resize", handleResize);
+
+  function handleFullscreen() {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      canvas!.requestFullscreen();
+    }
+  }
+
+  window.addEventListener("dblclick", handleFullscreen);
 
   // GAME LOOP
   const clock = new THREE.Clock();
