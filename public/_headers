@@ -1,0 +1,3 @@
+*.hdr
+  Content-Type: image/vnd.radiance
+  Content-Disposition: inline; filename="*.hdr"
