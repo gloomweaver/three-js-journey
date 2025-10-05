@@ -53,17 +53,17 @@ export function run() {
   // MESHES
   const torus = new THREE.Mesh(
     new THREE.TorusGeometry(0.5, 0.2, 64, 64),
-    material
+    material,
   );
   torus.position.x = -2;
   const sphere = new THREE.Mesh(
     new THREE.SphereGeometry(0.5, 32, 32),
-    material
+    material,
   );
   sphere.position.x = 2;
   const plane = new THREE.Mesh(
     new THREE.PlaneGeometry(1, 1, 100, 100),
-    material
+    material,
   );
   scene.add(torus, sphere, plane);
 
@@ -72,7 +72,7 @@ export function run() {
     75,
     window.innerWidth / window.innerHeight,
     0.1,
-    1000
+    1000,
   );
   camera.position.z = 6;
   scene.add(camera);
@@ -84,7 +84,7 @@ export function run() {
   controls.enableDamping = true;
 
   // HANDLERS
-  let timeout: number;
+  let timeout: NodeJS.Timeout;
   function handleResize() {
     if (timeout) {
       clearTimeout(timeout);
@@ -130,3 +130,5 @@ export function run() {
 
   animate();
 }
+
+run();
