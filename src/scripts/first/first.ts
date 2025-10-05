@@ -7,6 +7,7 @@ import doorHeightImg from "./textures/door/height.jpg";
 import metalnessImg from "./textures/door/metalness.jpg";
 import roughnessImg from "./textures/door/roughness.jpg";
 import normalImg from "./textures/door/normal.jpg";
+import { GUI } from "lil-gui";
 
 export function run() {
   const scene = new THREE.Scene();
@@ -14,6 +15,8 @@ export function run() {
   if (!canvas) {
     throw new Error("Canvas not found");
   }
+
+  const gui = new GUI();
 
   // LOAD ASSETS
   const manager = new THREE.LoadingManager();
@@ -35,13 +38,13 @@ export function run() {
   textureDoorColor.colorSpace = THREE.SRGBColorSpace;
 
   // MATERIALS
-  const material = new THREE.MeshStandardMaterial({
-    // map: textureDoorColor,
+  const material = new THREE.MeshPhysicalMaterial({
+    metalness: 1,
+    roughness: 1,
     metalnessMap: metalnessMapTexture,
     roughnessMap: roughnessMapTexture,
     map: textureDoorColor,
-    metalness: 1,
-    roughness: 1,
+
     aoMap: ambientOcclusionDoorTexture,
     displacementMap: heightDoorTexture,
     displacementScale: 0.1,
@@ -49,6 +52,9 @@ export function run() {
     normalScale: new THREE.Vector2(5, 5),
     side: THREE.DoubleSide,
   });
+
+  gui.add(material, "metalness", 0, 1, 0.01);
+  gui.add(material, "roughness", 0, 1, 0.01);
 
   // MESHES
   const torus = new THREE.Mesh(
