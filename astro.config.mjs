@@ -6,9 +6,6 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   vite: {
     assetsInclude: "**/*.hdr",
-    plugins: [
-      // @ts-expect-error something wrong with types here
-      tailwindcss(),
-    ],
+    plugins: [tailwindcss()],
   },
 });
