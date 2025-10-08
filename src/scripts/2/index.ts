@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { setupBasicScene } from "../../lib/setupBasicScene";
 import typefaceFont from "three/examples/fonts/helvetiker_regular.typeface.json?url";
+import matcapTexture from "./textures/matcaps/1.png?url";
 import { FontLoader, TextGeometry } from "three/examples/jsm/Addons.js";
 
 async function loadResources() {
@@ -13,7 +14,7 @@ async function loadResources() {
   const fontLoader = new FontLoader(loadingManager);
   const textureLoader = new THREE.TextureLoader(loadingManager);
   const [textMatcap, font] = await Promise.all([
-    textureLoader.loadAsync("/textures/matcaps/1.png"),
+    textureLoader.loadAsync(matcapTexture),
     fontLoader.loadAsync(typefaceFont),
   ]);
 
